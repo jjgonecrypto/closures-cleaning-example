@@ -25,8 +25,6 @@ package org.justinjmoses.examples.closures.types
 			//create a signal from the Timer event
 			const signal:NativeSignal = new NativeSignal(timer, TimerEvent.TIMER, TimerEvent);
 			
-			var numTicks:int = 0;
-			
 			signal.add(function(evt:TimerEvent):void
 			{
 				var t:MyTimer = new MyTimer(1000, -1);
@@ -35,11 +33,14 @@ package org.justinjmoses.examples.closures.types
 					function(evt:TimerEvent):void
 					{
 						response.dispatch(index);
+						
+						//in this scope, arguments.callee refers to the current closure
 						t.removeEventListener(TimerEvent.TIMER_COMPLETE, arguments.callee);
 					});
 				
 				t.start();
 				
+				//this is an alternative to "addOnce()", but allows us to remove when we like
 				signal.remove(arguments.callee);
 				
 				timer.stop();

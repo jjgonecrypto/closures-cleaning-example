@@ -10,7 +10,7 @@ package org.justinjmoses.examples.closures.types
 	{
 		public function doSomething(index:int):void
 		{
-			var timer:MyTimer = new MyTimer(1000,-1);
+			const timer:MyTimer = new MyTimer(index * 100,-1);
 			
 			timer.addEventListener(TimerEvent.TIMER_COMPLETE, 
 				function(evt:TimerEvent):void

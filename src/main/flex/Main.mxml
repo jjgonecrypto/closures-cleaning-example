@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
 			   xmlns:s="library://ns.adobe.com/flex/spark" 
-			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" creationComplete="onCrtComplete(event)">
+			   xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:local="*">
 	<fx:Script>
 		<![CDATA[
 			import mx.collections.ArrayCollection;
 			import mx.events.FlexEvent;
 			import mx.rpc.events.ResultEvent;
 			
-			import org.justinjmoses.examples.closures.types.SomethingWeak;
-			import org.justinjmoses.examples.closures.types.SomethingSignalsCallee;
-			import org.justinjmoses.examples.closures.types.SomethingSignalsNestedCallee;
+			import org.justinjmoses.examples.closures.IDoesSomething;
+			import org.justinjmoses.examples.closures.types.*;
 			import org.osflash.signals.ISignal;
 			
-			[Bindable]
-			private var collection:ArrayCollection = new ArrayCollection();
+			import spark.events.IndexChangeEvent;
 			
-			protected function onCrtComplete(event:FlexEvent):void
+			private function onButtonChange(evt:IndexChangeEvent):void
 			{
-				for (var i:int = 0; i < 100; i++)
+				//prevent reselection
+				selector.enabled = false;
+				
+				switch (evt.newIndex)
 				{
-					var data:Object = {};
-					var something:SomethingSignalsNestedCallee = new SomethingSignalsNestedCallee();
-					var signal:ISignal = something.doSomething(i);
-					data["index"] = i;
-					data["prop"] = something;
-					signal.add(function(index:int):void
-					{
-						if (collection.getItemAt(index))
-						{
-							collection.getItemAt(index)["status"] = "YES";
-							collection.refresh();
-						}
-					});
-					data["status"] = "";
-					collection.addItemAt(data, i);
+					case 0: //weak - THIS IS UNSTABLE! 
+						output.type = SomethingWeak;
+						break;
+					case 1: //named
+						output.type = SomethingNamed;
+						break;
+					case 2: //callee
+						output.type = SomethingCallee;
+						break;
+					case 3: //type-level reference
+						output.type = SomethingTypeLevel;
+						break;
+					case 4: //ISignal.addOnce()
+						output.signalType = SomethingSignalsAddOnce;
+						break;
+					case 5: //signals + arguments.callee
+						output.signalType = SomethingSignalsCallee;
+						break;
+					case 6: //ISignal.removeAll()
+						output.signalType = SomethingSignalsRemoveAll;
+						break;
 				}
 			}
 			
@@ -43,6 +50,24 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
+	<s:layout>
+		<s:VerticalLayout />
+	</s:layout>
 	
-	<s:DataGrid dataProvider="{collection}" height="100%" width="100%" verticalScrollPolicy="on" />
+	<s:ButtonBar id="selector" change="onButtonChange(event)" width="100%">
+		<s:ArrayCollection>
+			<fx:String>1. Weak References</fx:String>
+			<fx:String>2. Locally Named</fx:String>
+			<fx:String>3. Arugments.Callee</fx:String>
+			<fx:String>4. Type-level reference</fx:String>
+			<fx:String>5A. Signals addOnce()</fx:String>
+			<fx:String>5B. Signals arguments.Callee</fx:String>
+			<fx:String>5C. Signals removeAll()</fx:String>
+		</s:ArrayCollection>
+	</s:ButtonBar>
+	
+	<s:Line height="2" width="100%" />
+	
+	<local:OutputContainer id="output" width="100%" height="100%" />
+	
 </s:Application>

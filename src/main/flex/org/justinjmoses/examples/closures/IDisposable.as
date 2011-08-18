@@ -2,6 +2,6 @@ package org.justinjmoses.examples.closures
 {
 	public interface IDisposable
 	{
-		function dispose();
+		function dispose():void;
 	}
 }

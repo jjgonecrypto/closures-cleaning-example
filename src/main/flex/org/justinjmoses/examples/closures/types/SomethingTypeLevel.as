@@ -17,7 +17,7 @@ package org.justinjmoses.examples.closures.types
 		
 		public function doSomething(index:int):void
 		{
-			timer = new MyTimer(1000);
+			timer = new MyTimer(index * 100);
 			
 			timerHandler = function(evt:TimerEvent):void
 			{
@@ -33,10 +33,7 @@ package org.justinjmoses.examples.closures.types
 		{
 			if (!timer) return;
 			
-			if (timer.hasEventListener(TimerEvent.TIMER, timerHandler))
-			{
-				timer.removeEventListener(TimerEvent.TIMER, timerHandler);
-			}
+			timer.removeEventListener(TimerEvent.TIMER, timerHandler);
 			
 			timer.stop();
 			timer = null;

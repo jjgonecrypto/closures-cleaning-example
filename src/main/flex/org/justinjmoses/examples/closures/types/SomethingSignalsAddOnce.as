@@ -24,7 +24,7 @@ package org.justinjmoses.examples.closures.types
 			
 			//once TIMER COMPLETE has occurred, we can dispatch our signal, addOnce() ensures listeners to 
 			//Timer will be cleaned up
-			signal.addOnce(function():void
+			signal.addOnce(function(evt:TimerEvent):void
 			{
 				response.dispatch(index);
 			});

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					xmlns:s="library://ns.adobe.com/flex/spark" 
+					xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="onCrtComplete(event)">
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			
+			import org.justinjmoses.examples.closures.IDisposable;
+			import org.justinjmoses.examples.closures.IDoesSomething;
+			import org.justinjmoses.examples.closures.IDoesSomethingWithSignals;
+			import org.justinjmoses.examples.closures.events.SomethingEvent;
+			import org.osflash.signals.ISignal;
+			
+			private const collection:ArrayCollection = new ArrayCollection();
+			private var doers:Array = [];
+			
+			protected function onCrtComplete(event:FlexEvent):void
+			{
+				datagrid.dataProvider = collection;
+			}
+			
+			public function set type(somethingType:Class):void
+			{
+			
+				for (var i:int = 0; i < 100; i++)
+				{ 
+					var doer:IDoesSomething = new somethingType() as IDoesSomething;
+					doers.push(doer);
+					
+					doer.addEventListener(SomethingEvent.SOMETHING_HAPPENED, 
+						function(evt:SomethingEvent):void
+						{
+							if (doer is IDisposable)
+							{
+								(doer as IDisposable).dispose();
+								collection.getItemAt(evt.index)["disposed"] = "YES";
+							}
+							
+							collection.getItemAt(evt.index)["status"] = "YES";
+							collection.refresh();
+							
+							doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, arguments.callee);
+						}); 
+			
+					const data:Object = {};
+					data["index"] = i;
+					data["status"] = ".";
+					data["disposed"] = "";
+					collection.addItemAt(data, i);
+					
+					doer.doSomething(i);
+				}
+			}
+			
+			
+			public function set signalType(somethingType:Class):void
+			{
+				
+				for (var i:int = 0; i < 100; i++)
+				{ 
+					var doer:IDoesSomethingWithSignals = new somethingType() as IDoesSomethingWithSignals;
+					doers.push(doer);
+					
+					const data:Object = {};
+					data["index"] = i;
+					data["status"] = ".";
+					data["disposed"] = "";
+					collection.addItemAt(data, i);
+					
+					const signal:ISignal = doer.doSomething(i);
+					
+					signal.addOnce(function(index:int):void
+					{
+						if (doer is IDisposable)
+						{
+							(doer as IDisposable).dispose();
+							collection.getItemAt(index)["disposed"] = "YES";
+						}
+						
+						collection.getItemAt(index)["status"] = "YES";
+						collection.refresh();
+					});
+				}
+			}
+			
+			
+		]]>
+	</fx:Script>
+	
+	<s:DataGrid id="datagrid" width="90%" height="90%" />
+	
+</s:NavigatorContent>

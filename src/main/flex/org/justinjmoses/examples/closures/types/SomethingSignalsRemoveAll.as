@@ -25,7 +25,7 @@ package org.justinjmoses.examples.closures.types
 			//create a signal from the Timer event
 			timerSignal = new NativeSignal(timer, TimerEvent.TIMER, TimerEvent);
 			
-			timerSignal.add(function():void
+			timerSignal.add(function(evt:TimerEvent):void
 			{
 				response.dispatch(index);
 			});
