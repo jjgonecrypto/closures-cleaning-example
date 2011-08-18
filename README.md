@@ -9,7 +9,11 @@ This example is an overview of various mechanisms to remove listeners to closure
 * [As3-Signals v0.8](https://github.com/robertpenner/as3-signals)
 
 ##Usage instructions
-In Flashbuilder or IntelliJ, create a new project from the cloned source, and add the 3 SWC dependencies.
+* *Flashbuilder*: Run the following maven goal to generate the project files from the pom.
+        
+	    mvn org.sonatype.flexmojos:flexmojos-maven-plugin:3.9:flashbuilder 
+
+* *IntelliJ*: Use [the import wizard](http://blogs.jetbrains.com/idea/2009/09/flexmojos-inmaia/)
 
 ##Build instructions
 To build on your machine via Maven. Follow these steps:
