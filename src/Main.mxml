@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" 
+			   xmlns:s="library://ns.adobe.com/flex/spark" 
+			   xmlns:mx="library://ns.adobe.com/flex/mx" minWidth="955" minHeight="600" creationComplete="onCrtComplete(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.events.FlexEvent;
+			import mx.rpc.events.ResultEvent;
+			
+			import org.justinjmoses.examples.closures.types.SomethingWeak;
+			import org.justinjmoses.examples.closures.types.SomethingSignalsCallee;
+			import org.justinjmoses.examples.closures.types.SomethingSignalsNestedCallee;
+			import org.osflash.signals.ISignal;
+			
+			[Bindable]
+			private var collection:ArrayCollection = new ArrayCollection();
+			
+			protected function onCrtComplete(event:FlexEvent):void
+			{
+				for (var i:int = 0; i < 100; i++)
+				{
+					var data:Object = {};
+					var something:SomethingSignalsNestedCallee = new SomethingSignalsNestedCallee();
+					var signal:ISignal = something.doSomething(i);
+					data["index"] = i;
+					data["prop"] = something;
+					signal.add(function(index:int):void
+					{
+						if (collection.getItemAt(index))
+						{
+							collection.getItemAt(index)["status"] = "YES";
+							collection.refresh();
+						}
+					});
+					data["status"] = "";
+					collection.addItemAt(data, i);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<s:DataGrid dataProvider="{collection}" height="100%" width="100%" verticalScrollPolicy="on" />
+</s:Application>
