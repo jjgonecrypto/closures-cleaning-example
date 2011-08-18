@@ -4,3 +4,13 @@ src/.DS_Store
 src/org/.DS_Store
 
 .DS_Store
+
+target/closures-cleaning-example-1.0-SNAPSHOT.swf
+
+target/closures-cleaning-example-1.0-SNAPSHOT-size-report.xml
+
+target/closures-cleaning-example-1.0-SNAPSHOT-configs.xml
+
+target/closures-cleaning-example-1.0-SNAPSHOT-link-report.xml
+
+target/classes/fonts.ser
