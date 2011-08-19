@@ -26,7 +26,6 @@
 			private const collection:ArrayCollection = new ArrayCollection();
 			private const rows:int = 100;
 			
-			private var listeners:Object = {};
 			private var signals:Vector.<ISignalBinding> = new <ISignalBinding>[];
 			
 			protected function onCrtComplete(event:FlexEvent):void
@@ -92,12 +91,10 @@
 				});
 				collection.source.forEach(function(item:*, ... args):void
 				{
-					if (item["doer"] is IEventDispatcher)
-					{
-						const doer:IEventDispatcher = item["doer"] as IEventDispatcher; 
-						doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, handleSomething);
-					}
+					const doer:IEventDispatcher = item["doer"] as IEventDispatcher; 
+					if (doer) doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, handleSomething);
 				});
+				signals = new <ISignalBinding>[];
 				collection.removeAll(); 
 			}
 
