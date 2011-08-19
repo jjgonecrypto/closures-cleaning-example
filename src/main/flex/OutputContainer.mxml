@@ -3,6 +3,11 @@
 					xmlns:s="library://ns.adobe.com/flex/spark" 
 					xmlns:mx="library://ns.adobe.com/flex/mx" 
 					creationComplete="onCrtComplete(event)">
+	<fx:Script>
+		<![CDATA[
+			import mx.core.mx_internal;
+		]]>
+	</fx:Script>
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
@@ -45,7 +50,7 @@
 					doer.addEventListener(SomethingEvent.SOMETHING_HAPPENED, handleSomething); 
 					
 					doer.doSomething(i);
-				}
+				} 
 			}
 			
 			//reference this at the class level so we can remove it easily if switching types
@@ -120,12 +125,23 @@
 				collection.refresh();
 			}
 			
+			protected function updateMemory():void
+			{
+				System.gc();
+				lblMemory.text = (System.totalMemory / Math.pow(1024,2)).toFixed(3) + "MB";
+			}
 		]]>
 	</fx:Script>
 	
 	<s:layout>
-		<s:HorizontalLayout horizontalAlign="center" verticalAlign="middle" />
+		<s:VerticalLayout horizontalAlign="center" verticalAlign="middle" />
 	</s:layout>
+	
+	<s:HGroup verticalAlign="middle">
+		<s:Label text="Memory Usage:" />
+		<s:Label id="lblMemory" />
+		<s:Button label="Force GC" click="updateMemory()" />
+	</s:HGroup>
 	
 	<s:List id="list" width="90%" height="90%">
 		<s:layout>
