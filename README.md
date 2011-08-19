@@ -2,7 +2,7 @@
 
 This example is an overview of various mechanisms to remove listeners to closures in Flash, thus preventing memory leaks.
 
-[Check out the blog post](...).
+[Check out the blog post](http://justinjmoses.wordpress.com/2011/08/19/cleaning-up-after-closures-in-flash/).
 
 ##Usage
 Run the various closure techniques via the application using Flashbuilder's Profiler. Check the usage of the `MyTimer` class (which is what we're testing). It will increase into a hundred instances (for each item) for all tests, and then after running GC manually, will decrease back to 0 instances. 
