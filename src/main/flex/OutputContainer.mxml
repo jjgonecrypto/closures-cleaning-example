@@ -16,10 +16,13 @@
 			import org.justinjmoses.examples.closures.IDoesSomethingWithSignals;
 			import org.justinjmoses.examples.closures.events.SomethingEvent;
 			import org.osflash.signals.ISignal;
+			import org.osflash.signals.ISignalBinding;
 			
 			private const collection:ArrayCollection = new ArrayCollection();
-			private var doers:Array = [];
 			private const rows:int = 100;
+			
+			private var listeners:Object = {};
+			private var signals:Vector.<ISignalBinding> = new <ISignalBinding>[];
 			
 			protected function onCrtComplete(event:FlexEvent):void
 			{
@@ -36,18 +39,21 @@
 				for (var i:int = 0; i < rows; i++)
 				{ 
 					var doer:IDoesSomething = new somethingType() as IDoesSomething;
+					
 					prepareItem(doer, i);
 					
-					doer.addEventListener(SomethingEvent.SOMETHING_HAPPENED, 
-						function(evt:SomethingEvent):void
-						{
-							updateItem(evt.index);
-							
-							doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, arguments.callee);
-						}); 
-	
+					doer.addEventListener(SomethingEvent.SOMETHING_HAPPENED, handleSomething); 
+					
 					doer.doSomething(i);
 				}
+			}
+			
+			//reference this at the class level so we can remove it easily if switching types
+			private function handleSomething(evt:SomethingEvent):void
+			{
+				updateItem(evt.index);	
+				const doer:* = collection.getItemAt(evt.index)["doer"];
+				if (doer) doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, arguments.callee);
 			}
 			
 			/**
@@ -64,27 +70,34 @@
 					
 					const signal:ISignal = doer.doSomething(i);
 					
-					signal.addOnce(function(index:int):void
+					const binding:ISignalBinding = signal.addOnce(function(index:int):void
 					{
 						updateItem(index);
 					});
+					
+					signals.push(binding);
 				}
 			}
 			
 			protected function empty():void
 			{
+				signals.forEach(function(binding:ISignalBinding, ... args):void
+				{
+					binding.remove();
+				});
 				collection.source.forEach(function(item:*, ... args):void
 				{
+					if (item["doer"] is IEventDispatcher)
+					{
+						const doer:IEventDispatcher = item["doer"] as IEventDispatcher; 
+						doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, handleSomething);
+					}
 				});
-				
 				collection.removeAll(); 
-				doers = [];
 			}
 
 			protected function prepareItem(doer:*, index:int):void
 			{
-				doers.push(doer);
-				
 				const data:Object = {};
 				data["index"] = index;
 				data["status"] = ".";
