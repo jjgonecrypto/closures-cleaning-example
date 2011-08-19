@@ -5,10 +5,11 @@ package org.justinjmoses.examples.closures.types
 	
 	import mx.rpc.events.ResultEvent;
 	
+	import org.justinjmoses.examples.closures.IDoesSomethingWithSignals;
+	import org.justinjmoses.examples.closures.util.MyTimer;
 	import org.osflash.signals.ISignal;
 	import org.osflash.signals.Signal;
 	import org.osflash.signals.natives.NativeSignal;
-	import org.justinjmoses.examples.closures.IDoesSomethingWithSignals;
 
 	public class SomethingSignalsAddOnce implements IDoesSomethingWithSignals
 	{
@@ -17,7 +18,7 @@ package org.justinjmoses.examples.closures.types
 			//create a Signal to return
 			const response:ISignal = new Signal(int);
 			
-			const timer:Timer = new Timer(index * 100,-1);
+			const timer:MyTimer = new MyTimer(index * 100,-1);
 			
 			//create a signal from the Timer event
 			const signal:NativeSignal = new NativeSignal(timer, TimerEvent.TIMER_COMPLETE, TimerEvent);

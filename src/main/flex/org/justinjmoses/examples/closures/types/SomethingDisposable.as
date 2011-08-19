@@ -7,7 +7,7 @@ package org.justinjmoses.examples.closures.types
 	import org.justinjmoses.examples.closures.util.MyTimer;
 	import org.justinjmoses.examples.closures.events.SomethingEvent;
 
-	public class SomethingTypeLevel extends EventDispatcher implements IDoesSomething, IDisposable
+	public class SomethingDisposable extends EventDispatcher implements IDoesSomething, IDisposable
 	{
 		//handler is now defined at a type (class) level
 		private var timerHandler:Function;

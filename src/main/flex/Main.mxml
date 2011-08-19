@@ -17,7 +17,7 @@
 			private function onButtonChange(evt:IndexChangeEvent):void
 			{
 				//prevent reselection
-				selector.enabled = false;
+				//selector.enabled = false;
 				
 				switch (evt.newIndex)
 				{
@@ -31,7 +31,7 @@
 						output.type = SomethingCallee;
 						break;
 					case 3: //type-level reference
-						output.type = SomethingTypeLevel;
+						output.type = SomethingDisposable;
 						break;
 					case 4: //ISignal.addOnce()
 						output.signalType = SomethingSignalsAddOnce;

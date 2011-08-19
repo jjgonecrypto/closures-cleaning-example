@@ -11,6 +11,10 @@ package org.justinjmoses.examples.closures.types
 	import org.justinjmoses.examples.closures.util.MyTimer;
 	import org.justinjmoses.examples.closures.events.SomethingEvent;
 	
+	/**
+	 * This is an example of using weak references around closures. It is not recommended because 
+	 * it creates unpredictable results.
+	 */
 	public class SomethingWeak extends EventDispatcher implements IDoesSomething
 	{
 		public function doSomething(index:int):void

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<s:NavigatorContent xmlns:fx="http://ns.adobe.com/mxml/2009" 
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
 					xmlns:s="library://ns.adobe.com/flex/spark" 
-					xmlns:mx="library://ns.adobe.com/flex/mx" creationComplete="onCrtComplete(event)">
+					xmlns:mx="library://ns.adobe.com/flex/mx" 
+					creationComplete="onCrtComplete(event)">
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
@@ -18,80 +19,125 @@
 			
 			private const collection:ArrayCollection = new ArrayCollection();
 			private var doers:Array = [];
+			private const rows:int = 100;
 			
 			protected function onCrtComplete(event:FlexEvent):void
 			{
-				datagrid.dataProvider = collection;
+				list.dataProvider = collection;
 			}
 			
+			/**
+			 * Using events.
+			 */
 			public function set type(somethingType:Class):void
 			{
-			
-				for (var i:int = 0; i < 100; i++)
+				empty();
+				
+				for (var i:int = 0; i < rows; i++)
 				{ 
 					var doer:IDoesSomething = new somethingType() as IDoesSomething;
-					doers.push(doer);
+					prepareItem(doer, i);
 					
 					doer.addEventListener(SomethingEvent.SOMETHING_HAPPENED, 
 						function(evt:SomethingEvent):void
 						{
-							if (doer is IDisposable)
-							{
-								(doer as IDisposable).dispose();
-								collection.getItemAt(evt.index)["disposed"] = "YES";
-							}
-							
-							collection.getItemAt(evt.index)["status"] = "YES";
-							collection.refresh();
+							updateItem(evt.index);
 							
 							doer.removeEventListener(SomethingEvent.SOMETHING_HAPPENED, arguments.callee);
 						}); 
-			
-					const data:Object = {};
-					data["index"] = i;
-					data["status"] = ".";
-					data["disposed"] = "";
-					collection.addItemAt(data, i);
-					
+	
 					doer.doSomething(i);
 				}
 			}
 			
-			
+			/**
+			 * Using signals.
+			 */
 			public function set signalType(somethingType:Class):void
 			{
+				empty();
 				
-				for (var i:int = 0; i < 100; i++)
+				for (var i:int = 0; i < rows; i++)
 				{ 
 					var doer:IDoesSomethingWithSignals = new somethingType() as IDoesSomethingWithSignals;
-					doers.push(doer);
-					
-					const data:Object = {};
-					data["index"] = i;
-					data["status"] = ".";
-					data["disposed"] = "";
-					collection.addItemAt(data, i);
+					prepareItem(doer, i);
 					
 					const signal:ISignal = doer.doSomething(i);
 					
 					signal.addOnce(function(index:int):void
 					{
-						if (doer is IDisposable)
-						{
-							(doer as IDisposable).dispose();
-							collection.getItemAt(index)["disposed"] = "YES";
-						}
-						
-						collection.getItemAt(index)["status"] = "YES";
-						collection.refresh();
+						updateItem(index);
 					});
 				}
 			}
 			
+			protected function empty():void
+			{
+				collection.source.forEach(function(item:*, ... args):void
+				{
+				});
+				
+				collection.removeAll(); 
+				doers = [];
+			}
+
+			protected function prepareItem(doer:*, index:int):void
+			{
+				doers.push(doer);
+				
+				const data:Object = {};
+				data["index"] = index;
+				data["status"] = ".";
+				data["doer"] = doer;
+				collection.addItemAt(data, index);
+			}
+			
+			protected function updateItem(index:int):void
+			{
+				const doer:* = collection.getItemAt(index)["doer"];
+				
+				if (!doer) return;
+				
+				if (doer is IDisposable)
+				{
+					(doer as IDisposable).dispose();
+				}
+				
+				collection.getItemAt(index)["status"] = "OK";
+				collection.refresh();
+			}
 			
 		]]>
 	</fx:Script>
 	
-	<s:DataGrid id="datagrid" width="90%" height="90%" />
+	<s:layout>
+		<s:HorizontalLayout horizontalAlign="center" verticalAlign="middle" />
+	</s:layout>
 	
-</s:NavigatorContent>
+	<s:List id="list" width="90%" height="90%">
+		<s:layout>
+			<s:TileLayout />
+		</s:layout>
+		<s:itemRenderer>
+			<fx:Component>
+				<s:ItemRenderer>
+					<fx:Script>
+						<![CDATA[
+							override public function set data(value:Object):void
+							{
+								lblIndex.text = value.index;
+								lblStatus.text = value.status;
+							}
+						]]>
+					</fx:Script>
+					<s:layout>
+						<s:HorizontalLayout />
+					</s:layout>
+					<s:Label id="lblIndex" />
+					<s:Label id="lblStatus" color="green" />
+				</s:ItemRenderer>
+			</fx:Component>
+		</s:itemRenderer>
+	</s:List>
+	
+</s:Group>
