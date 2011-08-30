@@ -12,15 +12,16 @@ package org.justinjmoses.examples.closures.types
 		{
 			const timer:MyTimer = new MyTimer(index * 100,-1);
 			
-			const timerHandler:Function = function(evt:TimerEvent):void
-			{
-				dispatchEvent(new SomethingEvent(SomethingEvent.SOMETHING_HAPPENED, index));
-				
-				//cleanup after ourselves
-				timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerHandler);
-			};
+			var timerHandler:Function;
 			
-			timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerHandler);
+			timer.addEventListener(TimerEvent.TIMER_COMPLETE, timerHandler = 
+				function(evt:TimerEvent):void
+				{
+					dispatchEvent(new SomethingEvent(SomethingEvent.SOMETHING_HAPPENED, index));
+					
+					//cleanup after ourselves
+					timer.removeEventListener(TimerEvent.TIMER_COMPLETE, timerHandler);
+				});
 			
 			timer.start();
 		}

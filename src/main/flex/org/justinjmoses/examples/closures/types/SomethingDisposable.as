@@ -19,12 +19,11 @@ package org.justinjmoses.examples.closures.types
 		{
 			timer = new MyTimer(index * 100);
 			
-			timerHandler = function(evt:TimerEvent):void
-			{
-				dispatchEvent(new SomethingEvent(SomethingEvent.SOMETHING_HAPPENED, index));
-			};
-			
-			timer.addEventListener(TimerEvent.TIMER, timerHandler);
+			timer.addEventListener(TimerEvent.TIMER, timerHandler = 
+				function(evt:TimerEvent):void
+				{
+					dispatchEvent(new SomethingEvent(SomethingEvent.SOMETHING_HAPPENED, index));
+				});
 			
 			timer.start();
 		}
